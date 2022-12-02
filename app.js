@@ -5,9 +5,12 @@ const https = require("https");
 
 app.use(express.urlencoded());
 
+app.use(express.static("public"));
+
 app.set("view engine", "ejs");
 
-var vItems = [];
+let vItems = [];
+let vWorkItems = [];
 
 app.get("/", function (req, res) {
     let today = new Date();
@@ -19,15 +22,23 @@ app.get("/", function (req, res) {
     };
     let vDay = today.toLocaleDateString("en-US", options);
 
-    res.render("index", { date: vDay, items: vItems });
+    res.render("index", { listTitle: vDay, items: vItems });
 })
 
 app.post("/", function (req, res) {
-    vItems.push(req.body.newItem);
-    res.redirect("/");
+    console.log(req.body);
+    if (req.body.listButton === "Work") {
+        vWorkItems.push(req.body.newItem);
+        res.redirect("/work");
+    } else {
+        vItems.push(req.body.newItem);
+        res.redirect("/");
+    }
 })
 
-
+app.get("/work", function (req, res) {
+    res.render("index", { listTitle: "Work List", items: vWorkItems })
+})
 
 app.listen(3000, function () {
     console.log("Server running on port 3000");
