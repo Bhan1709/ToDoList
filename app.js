@@ -3,30 +3,23 @@ const app = express();
 
 const https = require("https");
 
+const date = require(__dirname + "/date.js");
+
 app.use(express.urlencoded());
 
 app.use(express.static("public"));
 
 app.set("view engine", "ejs");
 
-let vItems = [];
-let vWorkItems = [];
+const vItems = ["Build a To Do List"];
+const vWorkItems = ["Build a To Do List for Work"];
 
 app.get("/", function (req, res) {
-    let today = new Date();
-    let options = {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-    };
-    let vDay = today.toLocaleDateString("en-US", options);
-
+    const vDay = date.getFormattedDate();
     res.render("index", { listTitle: vDay, items: vItems });
 })
 
 app.post("/", function (req, res) {
-    console.log(req.body);
     if (req.body.listButton === "Work") {
         vWorkItems.push(req.body.newItem);
         res.redirect("/work");
